@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{roomName}}</title>
+</head>
+<body>
+<h1> Room </h1>
+<p>This is a demo of chatroom page</p>
+<p>
+    The room you are visiting is {{ roomName }}
+    The room id is {{roomID}}
+</p>
+
+<ul id="messages-list">
+    {{#each messages}}
+      <li id="{{messageID}}"> {{nickname}}
+      {{date_time}}
+      <br/> 
+      {{body}}
+      </li>
+    {{/each}}
+</ul>
+<form id="messageForm" onsubmit="post_new_message(event, '{{roomName}}', '{{roomID}}')">
+    <label>Enter Message Here</label>
+    <input type="text" name="message" id="message" required>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<script src="/util/roomIdGenerator.js"></script>
+<script>
+ let CurrentUserNickname = '';
+
+ async function post_new_message(event, roomName, roomID) {
+    event.preventDefault();
+
+    if (CurrentUserNickname === '') {
+        CurrentUserNickname = prompt("Please enter a nickname", "");
+        if (CurrentUserNickname === null) {
+            return;
+        }
+    }
+
+    const message = document.getElementById('message').value;
+    const messageID = generateRoomIdentifier();
+
+    try {
+        await fetch(`/${roomName}/${roomID}/${messageID}/${CurrentUserNickname}/${encodeURIComponent(message)}`, {
+            method: 'POST'
+        });
+
+        document.getElementById('message').value = ''; 
+        fetchMessages(roomName, roomID);
+    } catch (error) {
+        console.log("Error posting message:", error);
+    }
+ }
+
+ async function fetchMessages(roomName, roomID) {
+    try {
+        const response = await fetch(`/${roomName}/${roomID}/messages`);
+        const messages = await response.json();
+        updateMessagesList(messages);
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+    }
+ }
+
+ function updateMessagesList(messages) {
+    const messagesList = document.getElementById('messages-list');
+    messagesList.innerHTML = '';
+    messages.forEach(message => {
+        const li = document.createElement('li');
+        li.id = message.messageID;
+        li.innerHTML = `${message.nickname} ${message.date_time}<br/> ${message.body}`;
+        messagesList.appendChild(li);
+    });
+ }
+
+ // Fetch messages initially and then periodically
+ fetchMessages('{{roomName}}', '{{roomID}}');
+ setInterval(() => fetchMessages('{{roomName}}', '{{roomID}}'), 3000);
+
+</script>
+</body>
+</html>

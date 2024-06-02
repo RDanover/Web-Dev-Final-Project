@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+</head>
+<body>
+  <h1>{{title}}</h1>
+
+  <form id="Create_new_room_form" onsubmit="Create_New_Room(event)">
+    <p>Create New Room:</p>
+    <label>Enter Room Name</label>
+    <input type="text" name="room_name" id="room_name" required>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  <p>Join Existing Room:</p>
+  <ul>
+    {{#each chatrooms}}
+      <li id="{{roomID}}">{{roomName}} (ID: {{roomID}})
+        <button onclick="Join_Existing_Room('{{roomID}}', '{{roomName}}')">Join Room</button>
+      </li>
+    {{/each}}
+  </ul>
+  <script src="/util/roomIdGenerator.js"></script>
+  <script>
+
+  function Create_New_Room(event) {
+    event.preventDefault(); // Prevent form submission
+    const roomName = document.getElementById('room_name').value;
+    console.log('Creating Room...');
+    const roomID = generateRoomIdentifier();
+    fetch('/' + roomName + '/' + roomID, {
+      method: 'POST'
+    });
+
+    document.getElementById('room_name').value = '';
+    console.log("Joining Room:", { roomID, roomName });
+    window.location.href = '/' + roomName + '/' + roomID;
+  }
+
+  function Join_Existing_Room(roomID, roomName) {
+    console.log("Joining Room:", { roomID, roomName });
+    window.location.href = '/' + roomName + '/' + roomID;
+  }
+</script>
+</body>
+</html>
