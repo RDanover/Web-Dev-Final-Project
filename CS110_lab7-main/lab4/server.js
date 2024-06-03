@@ -47,11 +47,6 @@ app.set('view engine', 'hbs');
 
 //SERVER SIDE CODE:
 
-//Placeholders for database
-
-let chatrooms = [{ roomName: 'CS110', roomID: 'ABC123' },{ roomName: 'CS111', roomID: 'XYZ456' }];
-let messages = [{nickname: 'Herbert', messageID:'ABC123', body: 'Enjoy it before I destroy it!'}];
-
 app.get('/', homeHandler.getHome);//returns home page
 app.get('/:roomName/:roomID', roomHandler.getRoom);//returns chatroom page of specified roomName and ID
 
@@ -117,5 +112,36 @@ app.get('/chatrooms', (req, res) => {//cpnnect to db
     res.status(200).send();
   });
   
-  
+  app.get('/:roomName/:roomID/messages/:search_text', (req, res) => {//search message list 
+    console.log('Messages searched');
+    const roomID = req.params.roomID;
+    Message.find({roomID:roomID, $text: { $search: req.params.search_text }})
+      .then((data) => {
+        if (!data) {
+          res.status(404).send({
+            message: "Could not find message with room id" + roomID,
+          });
+        } else {
+          res.send(data);
+        }
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: "Could not find message with room id" + roomID,
+        });
+      });
+  });
+
+  app.post('/:roomName/:roomID/:messageID/:nickname/:message/edit', (req, res) => {
+    console.log('Chat edited');
+    Message.updateOne({messageID:req.params.messageID, $set:{body:decodeURIComponent(req.params.message)}})
+    res.status(200).send();
+  });
+
+  app.delete('/:roomName/:roomID/:messageID/:nickname/:message/delete', (req, res) => {
+    console.log('Chat deleted');
+    Message.deleteOne({messageID:req.params.messageID})
+    res.status(200).send();
+  });
+
 app.listen(port, () => console.log(`Server listening on http://localhost:${port}`));

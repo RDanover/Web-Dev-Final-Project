@@ -13,12 +13,20 @@
     The room id is {{roomID}}
 </p>
 
+<form id="message-search" onsubmit="find_message(event)">
+    <label>Enter message here</label>
+    <input type="text" name="message" id="message-search-box" required>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
 <ul id="messages-list">
     {{#each messages}}
       <li id="{{messageID}}"> {{nickname}}
       {{date_time}}
       <br/> 
       {{body}}
+      <button class="btn btn-primary" onClick="edit_message()">Edit</button>
+      <button class="btn btn-primary" onClick="delete_message()">Delete</button>
       </li>
     {{/each}}
 </ul>
