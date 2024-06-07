@@ -14,7 +14,7 @@
 </p>
 
 <form id="message-search" onsubmit="find_message(event)">
-    <label>Enter message here</label>
+    <label>Search messages here</label>
     <input type="text" name="message" id="message-search-box" required>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
@@ -42,7 +42,7 @@
  async function post_new_message(event, roomName, roomID) {
     event.preventDefault();
 
-    if (CurrentUserNickname === '') {
+    if (CurrentUserNickname === ''||CurrentUserNickname===null) {
         CurrentUserNickname = prompt("Please enter a nickname", "");
         if (CurrentUserNickname === null) {
             return;

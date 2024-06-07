@@ -4,13 +4,17 @@ const cookieParser = require('cookie-parser');
 const hbs = require('express-handlebars');
 const path = require('path');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // import handlers
 const homeHandler = require('./controllers/home.js');
 const roomHandler = require('./controllers/room.js');
+const authHandler = require('./controllers/auth.js');
 
 const Message = require('./models/Message');
 const Room = require('./models/Room');
+const User = require('./models/User');
 
 const app = express();
 const port = 8080;
@@ -50,7 +54,9 @@ app.set('view engine', 'hbs');
 app.get('/', homeHandler.getHome);//returns home page
 app.get('/:roomName/:roomID', roomHandler.getRoom);//returns chatroom page of specified roomName and ID
 
+app.get('/login', authHandler.getLogin);//returns login page
 
+app.get('/signup', authHandler.getSignup);//returns sign in page
 //Placeholders for database 
 
 app.post('/:roomName/:roomID', async (req, res) => {
@@ -112,36 +118,5 @@ app.get('/chatrooms', (req, res) => {//cpnnect to db
     res.status(200).send();
   });
   
-  app.get('/:roomName/:roomID/messages/:search_text', (req, res) => {//search message list 
-    console.log('Messages searched');
-    const roomID = req.params.roomID;
-    Message.find({roomID:roomID, $text: { $search: req.params.search_text }})
-      .then((data) => {
-        if (!data) {
-          res.status(404).send({
-            message: "Could not find message with room id" + roomID,
-          });
-        } else {
-          res.send(data);
-        }
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: "Could not find message with room id" + roomID,
-        });
-      });
-  });
-
-  app.post('/:roomName/:roomID/:messageID/:nickname/:message/edit', (req, res) => {
-    console.log('Chat edited');
-    Message.updateOne({messageID:req.params.messageID, $set:{body:decodeURIComponent(req.params.message)}})
-    res.status(200).send();
-  });
-
-  app.delete('/:roomName/:roomID/:messageID/:nickname/:message/delete', (req, res) => {
-    console.log('Chat deleted');
-    Message.deleteOne({messageID:req.params.messageID})
-    res.status(200).send();
-  });
-
+  
 app.listen(port, () => console.log(`Server listening on http://localhost:${port}`));
