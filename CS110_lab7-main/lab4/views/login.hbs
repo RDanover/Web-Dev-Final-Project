@@ -2,6 +2,20 @@
 <html>
 <head>
   <title>Login</title>
+  <script>
+    // Function to display alert messages
+    function showAlert(message) {
+      alert(message);
+    }
+
+    // Check for alert message in the URL parameters and display it
+    window.onload = function() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('alert')) {
+        showAlert(params.get('alert'));
+      }
+    }
+  </script>
 </head>
 <body>
   <h1>Login</h1>
