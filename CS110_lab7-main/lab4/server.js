@@ -55,8 +55,9 @@ app.get('/', homeHandler.getHome);//returns home page
 app.get('/:roomName/:roomID', roomHandler.getRoom);//returns chatroom page of specified roomName and ID
 
 app.get('/login', authHandler.getLogin);//returns login page
-
+app.post('/login', authHandler.postLogin);
 app.get('/signup', authHandler.getSignup);//returns sign in page
+app.post('/signup', authHandler.postSignup);
 //Placeholders for database 
 
 app.post('/:roomName/:roomID', async (req, res) => {

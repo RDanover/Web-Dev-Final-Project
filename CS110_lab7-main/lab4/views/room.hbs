@@ -19,14 +19,18 @@
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
+<ul id="messages-search-results">
+</ul>
+
 <ul id="messages-list">
     {{#each messages}}
       <li id="{{messageID}}"> {{nickname}}
       {{date_time}}
       <br/> 
       {{body}}
-      <button class="btn btn-primary" onClick="edit_message()">Edit</button>
-      <button class="btn btn-primary" onClick="delete_message()">Delete</button>
+      <br/> 
+      <button onClick="edit_message()">Edit</button>
+      <button onClick="delete_message()">Delete</button>
       </li>
     {{/each}}
 </ul>
@@ -80,7 +84,9 @@
     messages.forEach(message => {
         const li = document.createElement('li');
         li.id = message.messageID;
-        li.innerHTML = `${message.nickname} ${message.date_time}<br/> ${message.body}`;
+        li.innerHTML = `${message.nickname} ${message.date_time}<br/> ${message.body} <br/> 
+      <button onClick="edit_message()">Edit</button>
+      <button onClick="delete_message()">Delete</button>`;
         messagesList.appendChild(li);
     });
  }
