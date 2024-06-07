@@ -4,13 +4,17 @@ const cookieParser = require('cookie-parser');
 const hbs = require('express-handlebars');
 const path = require('path');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // import handlers
 const homeHandler = require('./controllers/home.js');
 const roomHandler = require('./controllers/room.js');
+const authHandler = require('./controllers/auth.js');
 
 const Message = require('./models/Message');
 const Room = require('./models/Room');
+const User = require('./models/User');
 
 const app = express();
 const port = 8080;
@@ -47,15 +51,13 @@ app.set('view engine', 'hbs');
 
 //SERVER SIDE CODE:
 
-//Placeholders for database
-
-let chatrooms = [{ roomName: 'CS110', roomID: 'ABC123' },{ roomName: 'CS111', roomID: 'XYZ456' }];
-let messages = [{nickname: 'Herbert', messageID:'ABC123', body: 'Enjoy it before I destroy it!'}];
-
 app.get('/', homeHandler.getHome);//returns home page
 app.get('/:roomName/:roomID', roomHandler.getRoom);//returns chatroom page of specified roomName and ID
 
-
+app.get('/login', authHandler.getLogin);//returns login page
+app.post('/login', authHandler.postLogin);
+app.get('/signup', authHandler.getSignup);//returns sign in page
+app.post('/signup', authHandler.postSignup);
 //Placeholders for database 
 
 app.post('/:roomName/:roomID', async (req, res) => {
