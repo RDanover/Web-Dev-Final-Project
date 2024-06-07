@@ -1,9 +1,6 @@
-// controllers/auth.js
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
-const secret = 'your_jwt_secret'; // This should be stored securely, not in code
 
 exports.getLogin = (req, res) => {
   res.render('login');
@@ -11,17 +8,20 @@ exports.getLogin = (req, res) => {
 
 exports.postLogin = async (req, res) => {
   const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user || !await bcrypt.compare(password, user.password)) {
-      return res.status(400).send('Invalid email or password');
-    }
-    const token = jwt.sign({ userId: user._id }, secret, { expiresIn: '1h' });
-    res.cookie('token', token, { httpOnly: true });
-    res.redirect('/');
-  } catch (err) {
-    res.status(500).send('Internal server error');
+  const user = await User.findOne({ email });
+  
+  if (!user) {
+    return res.status(400).json({ message: 'Invalid email or password' });
   }
+  
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(400).json({ message: 'Invalid email or password' });
+  }
+
+  const token = jwt.sign({ id: user._id }, 'secret_key');
+  res.cookie('token', token, { httpOnly: true });
+  res.status(200).json({ message: 'Login successful' });
 };
 
 exports.getSignup = (req, res) => {
@@ -30,12 +30,20 @@ exports.getSignup = (req, res) => {
 
 exports.postSignup = async (req, res) => {
   const { name, email, password } = req.body;
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword });
-    await user.save();
-    res.redirect('/login');
-  } catch (err) {
-    res.status(500).send('Internal server error');
+  const existingUser = await User.findOne({ email });
+
+  if (existingUser) {
+    return res.status(400).json({ message: 'Email already exists' });
   }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = new User({
+    name,
+    email,
+    password: hashedPassword
+  });
+
+  await newUser.save();
+  res.status(200).json({ message: 'Signup successful' });
 };
+
