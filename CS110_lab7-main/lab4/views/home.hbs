@@ -8,9 +8,6 @@
 <body>
   <h1>{{title}}</h1>
 
-  <button onClick="direct_to_login()">Login</button>
-  <button onClick="direct_to_signup()">Sign Up</button>
-
   <form id="Create_new_room_form" onsubmit="Create_New_Room(event)">
     <p>Create New Room:</p>
     <label>Enter Room Name</label>
@@ -45,14 +42,6 @@
   function Join_Existing_Room(roomID, roomName) {
     console.log("Joining Room:", { roomID, roomName });
     window.location.href = '/' + roomName + '/' + roomID;
-  }
-
-  function direct_to_login(){
-    window.location.href = '/login';
-  }
-
-    function direct_to_signup(){
-    window.location.href = '/signup';
   }
 
 </script>

@@ -11,13 +11,14 @@ const jwt = require('jsonwebtoken');
 const homeHandler = require('./controllers/home.js');
 const roomHandler = require('./controllers/room.js');
 const authHandler = require('./controllers/auth.js');
+const landingHandler = require('./controllers/landing.js');
 
 const Message = require('./models/Message');
 const Room = require('./models/Room');
 const User = require('./models/User');
 
 const app = express();
-const port = 8080;
+const port = 3000;
 
 const uri = "mongodb+srv://rdano001:aLh2YYXddmzwTbbU@cluster0.ono5ysw.mongodb.net/sample_mflix";
 const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
@@ -50,14 +51,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 //SERVER SIDE CODE:
-
-app.get('/', homeHandler.getHome);//returns home page
+app.get('/',landingHandler.getLanding);
+app.get('/home', homeHandler.getHome);//returns home page
 app.get('/:roomName/:roomID', roomHandler.getRoom);//returns chatroom page of specified roomName and ID
 
 app.get('/login', authHandler.getLogin);//returns login page
 app.post('/login', authHandler.postLogin);
 app.get('/signup', authHandler.getSignup);//returns sign in page
 app.post('/signup', authHandler.postSignup);
+
 //Placeholders for database 
 
 app.post('/:roomName/:roomID', async (req, res) => {

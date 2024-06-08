@@ -2,34 +2,57 @@
 <html>
 <head>
   <title>Sign Up</title>
-  <script>
-    //Function to display alert messages
-    function showAlert(message) {
-      alert(message);
-    }
-
-    //Check for alert message and display it
-    window.onload = function() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.has('alert')) {
-        showAlert(params.get('alert'));
-      }
-    }
-  </script>
 </head>
 <body>
   <h1>Sign Up</h1>
-  <form action="/signup" method="POST">
+  <form onsubmit="SignUp_Submit(event)">
     <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required>
+    <input type="text" id="name_signup" name="name" required>
     <br>
     <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
+    <input type="email" id="email_signup" name="email" required>
     <br>
     <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
+    <input type="password" id="password_signup" name="password" required>
     <br>
     <button type="submit">Sign Up</button>
   </form>
+   <button onclick="returnLanding()">Return to Landing Page</button>
+  <script>
+    async function SignUp_Submit(event) {
+        event.preventDefault();
+        const name = document.getElementById('name_signup').value
+        const email = document.getElementById('email_signup').value;
+        const password = document.getElementById('password_signup').value;
+
+        try {
+            const response = await fetch('/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, password })
+            });
+
+            const result = await response.json();
+
+            if (response.status === 200) {
+                // Login successful, redirect to home page
+                window.location.href = '/home';
+            } else {
+                // Display error message
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error during Sign Up:', error);
+            alert('An error occurred. Please try again.');
+        }
+    }
+
+    function returnLanding(){
+        window.location.href = '/';
+    }
+    
+  </script>
 </body>
 </html>

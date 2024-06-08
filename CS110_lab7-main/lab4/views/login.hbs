@@ -2,31 +2,54 @@
 <html>
 <head>
   <title>Login</title>
-  <script>
-    // Function to display alert messages
-    function showAlert(message) {
-      alert(message);
-    }
-
-    // Check for alert message in the URL parameters and display it
-    window.onload = function() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.has('alert')) {
-        showAlert(params.get('alert'));
-      }
-    }
-  </script>
 </head>
 <body>
   <h1>Login</h1>
-  <form action="/login" method="POST">
+  <form onsubmit="Login_Submit(event)">
     <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
+    <input type="email" id="email_login" name="email" required>
     <br>
     <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
+    <input type="password" id="password_login" name="password" required>
     <br>
     <button type="submit">Login</button>
   </form>
+  <button onclick="returnLanding()">Return to Landing Page</button>
+  <script>
+    async function Login_Submit(event) {
+        event.preventDefault();
+
+        const email = document.getElementById('email_login').value;
+        const password = document.getElementById('password_login').value;
+
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const result = await response.json();
+
+            if (response.status === 200) {
+                // Login successful, redirect to home page
+                window.location.href = '/home';
+            } else {
+                // Display error message
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+            alert('An error occurred. Please try again.');
+        }
+    }
+
+    function returnLanding(){
+        window.location.href = '/';
+    }
+
+  </script>
 </body>
 </html>
