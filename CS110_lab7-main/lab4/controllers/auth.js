@@ -9,17 +9,17 @@ exports.getLogin = (req, res) => {
 exports.postLogin = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  
+
   if (!user) {
     return res.status(400).json({ message: 'Invalid email or password' });
   }
-  
+
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     return res.status(400).json({ message: 'Invalid email or password' });
   }
 
-  const token = jwt.sign({ id: user._id }, 'secret_key');
+  const token = jwt.sign({ email: user.email, id: user._id }, 'your_jwt_secret_key', { expiresIn: '1h' });
   res.cookie('token', token, { httpOnly: true });
   res.status(200).json({ message: 'Login successful' });
 };
@@ -29,21 +29,19 @@ exports.getSignup = (req, res) => {
 };
 
 exports.postSignup = async (req, res) => {
-  const { name, email, password } = req.body;
-  const existingUser = await User.findOne({ email });
+  const { email, password, name } = req.body;
 
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
-    return res.status(400).json({ message: 'Account with that email already exists' });
+    return res.status(400).json({ message: 'Email already exists' });
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = new User({
-    name,
-    email,
-    password: hashedPassword
-  });
+  const user = new User({ email, password: hashedPassword, name });
+  await user.save();
 
-  await newUser.save();
+  const token = jwt.sign({ email: user.email, id: user._id }, 'your_jwt_secret_key', { expiresIn: '1h' });
+  res.cookie('token', token, { httpOnly: true });
   res.status(200).json({ message: 'Signup successful' });
 };
 

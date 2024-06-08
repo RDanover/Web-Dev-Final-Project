@@ -34,10 +34,8 @@
             const result = await response.json();
 
             if (response.status === 200) {
-                // Login successful, redirect to home page
                 window.location.href = '/home';
             } else {
-                // Display error message
                 alert(result.message);
             }
         } catch (error) {
@@ -45,11 +43,6 @@
             alert('An error occurred. Please try again.');
         }
     }
-
-    function returnLanding(){
-        window.location.href = '/';
-    }
-
   </script>
 </body>
 </html>

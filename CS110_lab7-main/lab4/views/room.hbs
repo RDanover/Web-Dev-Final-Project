@@ -19,8 +19,7 @@
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
-<ul id="messages-search-results">
-</ul>
+<ul id="messages-search-results"></ul>
 
 <ul id="messages-list">
     {{#each messages}}
@@ -28,26 +27,26 @@
       {{date_time}}
       <br/> 
       {{body}}
-      <br/> 
-      <button onClick="edit_message()">Edit</button>
-      <button onClick="delete_message()">Delete</button>
       </li>
     {{/each}}
 </ul>
+
 <form id="messageForm" onsubmit="post_new_message(event, '{{roomName}}', '{{roomID}}')">
     <label>Enter Message Here</label>
     <input type="text" name="message" id="message" required>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+
 <button onclick="returnhome()">Return To Room List</button>
+
 <script src="/util/roomIdGenerator.js"></script>
 <script>
- let CurrentUserNickname = '';
+ let CurrentUserNickname = '{{userEmail}}';
 
  async function post_new_message(event, roomName, roomID) {
     event.preventDefault();
 
-    if (CurrentUserNickname === ''||CurrentUserNickname===null) {
+    if (CurrentUserNickname === '' || CurrentUserNickname === null) {
         CurrentUserNickname = prompt("Please enter a nickname", "");
         if (CurrentUserNickname === null) {
             return;
@@ -85,9 +84,7 @@
     messages.forEach(message => {
         const li = document.createElement('li');
         li.id = message.messageID;
-        li.innerHTML = `${message.nickname} ${message.date_time}<br/> ${message.body} <br/> 
-      <button onClick="edit_message()">Edit</button>
-      <button onClick="delete_message()">Delete</button>`;
+        li.innerHTML = `${message.nickname} ${message.date_time}<br/> ${message.body}`;
         messagesList.appendChild(li);
     });
  }
@@ -95,7 +92,7 @@
  function returnhome(){
     window.location.href = '/home';
  }
- 
+
  // Fetch messages initially and then periodically
  fetchMessages('{{roomName}}', '{{roomID}}');
  setInterval(() => fetchMessages('{{roomName}}', '{{roomID}}'), 3000);

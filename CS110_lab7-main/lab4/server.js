@@ -25,101 +25,103 @@ const clientOptions = { serverApi: { version: '1', strict: true, deprecationErro
 
 async function run() {
   try {
-    // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
     await mongoose.connect(uri, clientOptions);
     await mongoose.connection.db.admin().command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    //Creating a new user
-    //const user = new User({name: "Janet", email : "something@gmail.com" , password: "pwd"})
-    //await user.save();
-    //console.log(user);
-    
   } finally {
     // Ensures that the client will close when you finish/error
-    //await mongoose.disconnect();
   }
 }
 run().catch(console.dir);
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.engine('hbs', hbs({extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/layouts/'}));
+app.engine('hbs', hbs({ extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/layouts/' }));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-//SERVER SIDE CODE:
-app.get('/',landingHandler.getLanding);
-app.get('/home', homeHandler.getHome);//returns home page
-app.get('/:roomName/:roomID', roomHandler.getRoom);//returns chatroom page of specified roomName and ID
+// Middleware to authenticate token
+function authenticateToken(req, res, next) {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).send('Access Denied');
 
-app.get('/login', authHandler.getLogin);//returns login page
+  jwt.verify(token, 'your_jwt_secret_key', (err, user) => {
+    if (err) return res.status(403).send('Invalid Token');
+    req.user = user;
+    next();
+  });
+}
+
+// SERVER SIDE CODE:
+app.get('/', landingHandler.getLanding);
+app.get('/home', authenticateToken, homeHandler.getHome); // returns home page
+app.get('/:roomName/:roomID', authenticateToken, roomHandler.getRoom); // returns chatroom page of specified roomName and ID
+
+app.get('/login', authHandler.getLogin); // returns login page
 app.post('/login', authHandler.postLogin);
-app.get('/signup', authHandler.getSignup);//returns sign in page
+app.get('/signup', authHandler.getSignup); // returns sign in page
 app.post('/signup', authHandler.postSignup);
 
-//Placeholders for database 
-
 app.post('/:roomName/:roomID', async (req, res) => {
-      console.log('New room created');
-      const room = new Room({ roomName: req.params.roomName, roomID: req.params.roomID });
-      await room.save();
-    });
+  console.log('New room created');
+  const room = new Room({ roomName: req.params.roomName, roomID: req.params.roomID });
+  await room.save();
+});
 
-app.get('/chatrooms', (req, res) => {//cpnnect to db
-    console.log('Chatrooms requested');
-    Room.find()
-      .then((data) => {
-        if (!data) {
-          res.status(404).send({
-            message: "Could not find chatrooms",
-          });
-        } else {
-          res.send(data);
-        }
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: "Could not get chatrooms",
+app.get('/chatrooms', (req, res) => {
+  console.log('Chatrooms requested');
+  Room.find()
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({
+          message: "Could not find chatrooms",
         });
+      } else {
+        res.send(data);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Could not get chatrooms",
       });
-  });
-  
-  app.get('/:roomName/:roomID/messages', (req, res) => {//connect to db
-    console.log('Messages requested');
-    const roomID = req.params.roomID;
-    Message.find({roomID:roomID})
-      .then((data) => {
-        if (!data) {
-          res.status(404).send({
-            message: "Could not find message with room id" + roomID,
-          });
-        } else {
-          res.send(data);
-        }
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: "Could not find message with room id" + roomID,
-        });
-      });
-  });
-  
-  app.post('/:roomName/:roomID/:messageID/:nickname/:message', async (req, res) => {
-    console.log('New chat created');
-    const current_time = new Date(); // Capture the current date and time
-    const message = new Message({
-      nickname: req.params.nickname,
-      messageID: req.params.messageID,
-      roomID: req.params.roomID,
-      body: decodeURIComponent(req.params.message),
-      date_time: current_time // Set the date_time field
     });
-    await message.save();
-    res.status(200).send();
+});
+
+app.get('/:roomName/:roomID/messages', (req, res) => {
+  console.log('Messages requested');
+  const roomID = req.params.roomID;
+  Message.find({ roomID: roomID })
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({
+          message: "Could not find message with room id " + roomID,
+        });
+      } else {
+        res.send(data);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Could not find message with room id " + roomID,
+      });
+    });
+});
+
+app.post('/:roomName/:roomID/:messageID/:nickname/:message', async (req, res) => {
+  console.log('New chat created');
+  const current_time = new Date(); // Capture the current date and time
+  const message = new Message({
+    nickname: req.params.nickname,
+    messageID: req.params.messageID,
+    roomID: req.params.roomID,
+    body: decodeURIComponent(req.params.message),
+    date_time: current_time // Set the date_time field
   });
-  
-  
+  await message.save();
+  res.status(200).send();
+});
+
 app.listen(port, () => console.log(`Server listening on http://localhost:${port}`));
