@@ -19,7 +19,7 @@ exports.postLogin = async (req, res) => {
     return res.status(400).json({ message: 'Invalid email or password' });
   }
 
-  const token = jwt.sign({ email: user.email, id: user._id }, 'your_jwt_secret_key', { expiresIn: '1h' });
+  const token = jwt.sign({ email: user.email, name:user.name, id: user._id }, 'your_jwt_secret_key', { expiresIn: '1h' });
   res.cookie('token', token, { httpOnly: true });
   res.status(200).json({ message: 'Login successful' });
 };
@@ -40,7 +40,7 @@ exports.postSignup = async (req, res) => {
   const user = new User({ email, password: hashedPassword, name });
   await user.save();
 
-  const token = jwt.sign({ email: user.email, id: user._id }, 'your_jwt_secret_key', { expiresIn: '1h' });
+  const token = jwt.sign({ email: user.email, name:user.name, id: user._id }, 'your_jwt_secret_key', { expiresIn: '1h' });
   res.cookie('token', token, { httpOnly: true });
   res.status(200).json({ message: 'Signup successful' });
 };

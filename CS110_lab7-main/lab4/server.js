@@ -64,6 +64,8 @@ app.get('/login', authHandler.getLogin); // returns login page
 app.post('/login', authHandler.postLogin);
 app.get('/signup', authHandler.getSignup); // returns sign in page
 app.post('/signup', authHandler.postSignup);
+app.put('/:roomName/:roomID/:messageID/edit', authenticateToken, roomHandler.editMessage);
+app.delete('/:roomName/:roomID/:messageID/delete', authenticateToken, roomHandler.deleteMessage);
 
 app.post('/:roomName/:roomID', async (req, res) => {
   console.log('New room created');
@@ -110,7 +112,7 @@ app.get('/:roomName/:roomID/messages', (req, res) => {
     });
 });
 
-app.post('/:roomName/:roomID/:messageID/:nickname/:message', async (req, res) => {
+app.post('/:roomName/:roomID/:messageID/:nickname/:message/:email', async (req, res) => {
   console.log('New chat created');
   const current_time = new Date(); // Capture the current date and time
   const message = new Message({
@@ -118,7 +120,8 @@ app.post('/:roomName/:roomID/:messageID/:nickname/:message', async (req, res) =>
     messageID: req.params.messageID,
     roomID: req.params.roomID,
     body: decodeURIComponent(req.params.message),
-    date_time: current_time // Set the date_time field
+    date_time: current_time, // Set the date_time field
+    email: req.params.email
   });
   await message.save();
   res.status(200).send();
