@@ -44,4 +44,3 @@ exports.postSignup = async (req, res) => {
   res.cookie('token', token, { httpOnly: true });
   res.status(200).json({ message: 'Signup successful' });
 };
-

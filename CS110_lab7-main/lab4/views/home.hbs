@@ -6,8 +6,8 @@
   <title>{{title}}</title>
 </head>
 <body>
+  <button onclick="signOut(event)">Sign Out</button>
   <h1>{{title}}</h1>
-
   <form id="Create_new_room_form" onsubmit="Create_New_Room(event)">
     <p>Create New Room:</p>
     <label>Enter Room Name</label>
@@ -43,7 +43,9 @@
     console.log("Joining Room:", { roomID, roomName });
     window.location.href = '/' + roomName + '/' + roomID;
   }
-
+  function signOut(){
+    window.location.href = '/';
+  }
 </script>
 </body>
 </html>

@@ -5,7 +5,8 @@ const messageSchema = new mongoose.Schema({
   messageID: String,
   roomID: String,
   body: String,
-  date_time: {type: Date}, // This line adds a date_time field with a default value of the current date and time
+  date: String, // This line adds a date_time field with a default value of the current date and time
+  time: String,
   email: String
 });
 

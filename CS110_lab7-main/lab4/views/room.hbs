@@ -6,32 +6,28 @@
   <title>{{roomName}}</title>
 </head>
 <body>
+<button onclick="signOut(event)">Sign Out</button>
+<button onclick="returnhome()">Return To Room List</button>
 <h1> Room </h1>
 <p>This is a demo of chatroom page</p>
 <p>
     The room you are visiting is {{ roomName }}
     The room id is {{roomID}}
 </p>
-
 <form id="message-search" onsubmit="find_message(event)">
-    <label>Search messages here</label>
-    <input type="text" name="message" id="message-search-box" required>
+    <label>Search messages here by date</label>
+    <input type="date" name="message" id="message-search-box" required>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-
+<button id = "message-search-clear"onclick="clear_message_search_results()" style="display:none">Clear Search Results</button>
 <ul id="messages-search-results"></ul>
-
-<ul id="messages-list">
-</ul>
+<ul id="messages-list"></ul>
 
 <form id="messageForm" onsubmit="post_new_message(event, '{{roomName}}', '{{roomID}}')">
     <label>Enter Message Here</label>
     <input type="text" name="message" id="message" required>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-
-<button onclick="returnhome()">Return To Room List</button>
-
 <script src="/util/roomIdGenerator.js"></script>
 <script>   
  let CurrentUserNickname = '{{userName}}';
@@ -77,7 +73,7 @@
     messages.forEach(message => {
         const li = document.createElement('li');
         li.id = message.messageID;
-        li.innerHTML = `${message.nickname} ${message.date_time}<br/> ${message.body}`;
+        li.innerHTML = `${message.nickname} ${message.date} ${message.time}<br/> ${message.body}`;
         if (message.email === '{{userEmail}}') {
             li.innerHTML += `<br/> <button onclick="editMessage('${message.messageID}', '${message.body}')">Edit</button> 
                              <button onclick="deleteMessage('${message.messageID}')">Delete</button>`;
@@ -117,9 +113,63 @@
         console.error('Error deleting message:', error);
     }
  }
+ 
+ async function find_message(event) {
+    event.preventDefault();
+
+    search_date = document.getElementById('message-search-box').value;
+    console.log(search_date)
+    const [year, month, day] = search_date.split('-');
+    search_date = `${month}-${day}-${year}`;
+    console.log(search_date)
+    url = `/{{roomName}}/{{roomID}}/search/`+ String(search_date);
+    
+    try {
+        const response = await fetch(url);
+        if(response.status === 404){
+            const messagesList = document.getElementById('messages-search-results');
+            messagesList.innerHTML = '';
+            search_date.innerHTML = '';
+            const p = document.createElement('p');
+            p.innerHTML = 'No messages on this date'
+            messagesList.appendChild(p);
+        }
+        else {
+            const messages = await response.json();
+            const messagesList = document.getElementById('messages-search-results');
+            messagesList.innerHTML = '';
+            search_date.innerHTML = '';
+            messages.forEach(message => {
+            const li = document.createElement('li');
+            li.id = message.messageID;
+            li.innerHTML = `${message.nickname} ${message.date} ${message.time}<br/> ${message.body}`;
+            if (message.email === '{{userEmail}}') {
+                li.innerHTML += `<br/> <button onclick="editMessage('${message.messageID}', '${message.body}')">Edit</button> 
+                                <button onclick="deleteMessage('${message.messageID}')">Delete</button>`;
+            }
+            messagesList.appendChild(li);
+            });
+        }
+        const clear_btn = document.getElementById('message-search-clear');
+        clear_btn.style.display = "block";
+    } catch (error) {
+        console.error('Error deleting message:', error);
+    }
+ }
+
+ function clear_message_search_results(){
+    const messagesList = document.getElementById('messages-search-results');
+    messagesList.innerHTML = '';
+    const clear_btn = document.getElementById('message-search-clear');
+    clear_btn.style.display = "none";
+ }
 
  function returnhome() {
     window.location.href = '/home';
+ }
+
+ function signOut(){
+    window.location.href = '/';
  }
 
  // Fetch messages initially and then periodically

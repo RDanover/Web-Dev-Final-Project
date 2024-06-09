@@ -66,6 +66,7 @@ app.get('/signup', authHandler.getSignup); // returns sign in page
 app.post('/signup', authHandler.postSignup);
 app.put('/:roomName/:roomID/:messageID/edit', authenticateToken, roomHandler.editMessage);
 app.delete('/:roomName/:roomID/:messageID/delete', authenticateToken, roomHandler.deleteMessage);
+app.get('/:roomName/:roomID/search/:search_date', roomHandler.searchMessage);
 
 app.post('/:roomName/:roomID', async (req, res) => {
   console.log('New room created');
@@ -120,11 +121,33 @@ app.post('/:roomName/:roomID/:messageID/:nickname/:message/:email', async (req, 
     messageID: req.params.messageID,
     roomID: req.params.roomID,
     body: decodeURIComponent(req.params.message),
-    date_time: current_time, // Set the date_time field
+    date: formatDate(current_time), // Extract and set the date
+    time: formatTime(current_time), // Extract and set the time
     email: req.params.email
   });
   await message.save();
   res.status(200).send();
 });
+
+// Function to format date as mm-dd-yyyy
+function formatDate(date) {
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${month}-${day}-${year}`;
+}
+
+// Function to format time as hh:mm
+function formatTime(date) {
+  hours_int = (date.getHours())
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  time = " am"
+  if(hours_int>12){
+    hours_int-=12
+    time = " pm"
+  }
+  hours = String(hours_int).padStart(2,'0');
+  return `${hours}:${minutes}`+time;
+}
 
 app.listen(port, () => console.log(`Server listening on http://localhost:${port}`));
