@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 exports.getLogin = (req, res) => {
-  res.render('login');
+  res.render('login',{title:"Log In"});
 };
 
 exports.postLogin = async (req, res) => {
@@ -25,7 +25,7 @@ exports.postLogin = async (req, res) => {
 };
 
 exports.getSignup = (req, res) => {
-  res.render('signup');
+  res.render('signup',{title:"Sign Up"});
 };
 
 exports.postSignup = async (req, res) => {

@@ -1,51 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{title}}</title>
-</head>
-<body>
-  <button onclick="signOut(event)">Sign Out</button>
-  <h1>{{title}}</h1>
-  <form id="Create_new_room_form" onsubmit="Create_New_Room(event)">
-    <p>Create New Room:</p>
-    <label>Enter Room Name</label>
-    <input type="text" name="room_name" id="room_name" required>
-    <button type="submit" class="btn btn-primary">Submit</button>
+<div class="home-container">
+<div class="options">
+<button class= "option-btn" onclick="signOut(event)">Sign Out</button>
+</div>
+<div class="new-room">
+  <form class="create_new_room_form" onsubmit="Create_New_Room(event)">
+    <p class="home-title">Create New Room:</p>
+    <div>
+      <label>Enter Room Name</label>
+      <input type="text" name="room_name" id="room_name" required>
+    </div>
+    <button class = "home-btn" type="submit" class="btn btn-primary">Submit</button>
   </form>
-  <p>Join Existing Room:</p>
-  <ul>
+</div>
+<div class="room-list-container">
+<p class="home-title">Join Existing Room:</p>
+  <div class="room-list">
     {{#each chatrooms}}
-      <li id="{{roomID}}">{{roomName}} (ID: {{roomID}})
-        <button onclick="Join_Existing_Room('{{roomID}}', '{{roomName}}')">Join Room</button>
-      </li>
+      <div class="room" id="{{roomID}}">
+        <p>{{roomName}} (ID: {{roomID}}) </p>
+        <button class = "room-btn" onclick="Join_Existing_Room('{{roomID}}', '{{roomName}}')">Join Room</button>
+      </div>
     {{/each}}
-  </ul>
-  <script src="/util/roomIdGenerator.js"></script>
-  <script>
+  </div>
+  <div class="spacer"></div>
+</div>
+</div>
+<script src="/util/roomIdGenerator.js"></script>
+<script>
 
-  function Create_New_Room(event) {
-    event.preventDefault(); // Prevent form submission
-    const roomName = document.getElementById('room_name').value;
-    console.log('Creating Room...');
-    const roomID = generateRoomIdentifier();
-    fetch('/' + roomName + '/' + roomID, {
-      method: 'POST'
-    });
+function Create_New_Room(event) {
+  event.preventDefault(); // Prevent form submission
+  const roomName = document.getElementById('room_name').value;
+  console.log('Creating Room...');
+  const roomID = generateRoomIdentifier();
+  fetch('/' + roomName + '/' + roomID, {
+    method: 'POST'
+  });
 
-    document.getElementById('room_name').value = '';
-    console.log("Joining Room:", { roomID, roomName });
-    window.location.href = '/' + roomName + '/' + roomID;
-  }
+  document.getElementById('room_name').value = '';
+  console.log("Joining Room:", { roomID, roomName });
+  window.location.href = '/' + roomName + '/' + roomID;
+}
 
-  function Join_Existing_Room(roomID, roomName) {
-    console.log("Joining Room:", { roomID, roomName });
-    window.location.href = '/' + roomName + '/' + roomID;
-  }
-  function signOut(){
-    window.location.href = '/';
-  }
+function Join_Existing_Room(roomID, roomName) {
+  console.log("Joining Room:", { roomID, roomName });
+  window.location.href = '/' + roomName + '/' + roomID;
+}
+function signOut(){
+  window.location.href = '/';
+}
 </script>
-</body>
-</html>

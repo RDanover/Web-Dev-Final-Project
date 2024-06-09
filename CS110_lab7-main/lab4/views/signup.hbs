@@ -1,58 +1,57 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Sign Up</title>
-</head>
-<body>
-  <h1>Sign Up</h1>
-  <form onsubmit="SignUp_Submit(event)">
+<div class="signup-container">
+<div class="login-signup-banner">Sign Up</div>
+<form class="login-signup-form" onsubmit="SignUp_Submit(event)">
+  <div class="login-signup-field">
     <label for="name">Name:</label>
     <input type="text" id="name_signup" name="name" required>
-    <br>
+  </div>
+
+  <div class="login-signup-field">
     <label for="email">Email:</label>
     <input type="email" id="email_signup" name="email" required>
-    <br>
+  </div>
+  <div class="login-signup-field">
     <label for="password">Password:</label>
     <input type="password" id="password_signup" name="password" required>
-    <br>
-    <button type="submit">Sign Up</button>
-  </form>
-   <button onclick="returnLanding()">Return to Landing Page</button>
-  <script>
-    async function SignUp_Submit(event) {
-        event.preventDefault();
-        const name = document.getElementById('name_signup').value
-        const email = document.getElementById('email_signup').value;
-        const password = document.getElementById('password_signup').value;
+  </div>
 
-        try {
-            const response = await fetch('/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name, email, password })
-            });
+  <button class="login-signup-btn" type="submit">Sign Up</button>
+</form>
+  <button class="login-signup-btn" onclick="returnLanding()">Return to Landing Page</button>
+</div>
+<script>
+  async function SignUp_Submit(event) {
+      event.preventDefault();
+      const name = document.getElementById('name_signup').value
+      const email = document.getElementById('email_signup').value;
+      const password = document.getElementById('password_signup').value;
 
-            const result = await response.json();
+      try {
+          const response = await fetch('/signup', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ name, email, password })
+          });
 
-            if (response.status === 200) {
-                // Login successful, redirect to home page
-                window.location.href = '/home';
-            } else {
-                // Display error message
-                alert(result.message);
-            }
-        } catch (error) {
-            console.error('Error during Sign Up:', error);
-            alert('An error occurred. Please try again.');
-        }
-    }
+          const result = await response.json();
 
-    function returnLanding(){
-        window.location.href = '/';
-    }
-    
-  </script>
-</body>
-</html>
+          if (response.status === 200) {
+              // Login successful, redirect to home page
+              window.location.href = '/home';
+          } else {
+              // Display error message
+              alert(result.message);
+          }
+      } catch (error) {
+          console.error('Error during Sign Up:', error);
+          alert('An error occurred. Please try again.');
+      }
+  }
+
+  function returnLanding(){
+      window.location.href = '/';
+  }
+  
+</script>

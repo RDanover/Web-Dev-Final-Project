@@ -1,33 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{roomName}}</title>
-</head>
-<body>
-<button onclick="signOut(event)">Sign Out</button>
-<button onclick="returnhome()">Return To Room List</button>
-<h1> Room </h1>
-<p>This is a demo of chatroom page</p>
+<div class="room-container">
+<div class="options">
+<button class = "option-btn" onclick="returnhome()">Return To Room List</button>
+<button class = "option-btn" onclick="signOut(event)">Sign Out</button>
+</div>
+<div class="description">
 <p>
     The room you are visiting is {{ roomName }}
+</p>
+<p>
     The room id is {{roomID}}
 </p>
-<form id="message-search" onsubmit="find_message(event)">
-    <label>Search messages here by date</label>
-    <input type="date" name="message" id="message-search-box" required>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-<button id = "message-search-clear"onclick="clear_message_search_results()" style="display:none">Clear Search Results</button>
-<ul id="messages-search-results"></ul>
-<ul id="messages-list"></ul>
+</div>
+<div class="message-search-options">
+    <form class="msg-search" id="message-search" onsubmit="find_message(event)">
+        <label>Search messages here</label>
+        <input type="text" name="message" id="message-search-box" required>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <form class="msg-search" id="message-search-date" onsubmit="find_message_by_date(event)">
+        <label>Search messages here by date</label>
+        <input type="date" name="message" id="message-search-date-box" required>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <button id = "message-search-clear" onclick="clear_message_search_results()" style="display:none">Clear Search Results</button>
+</div>
+<div class="message-display" id="message-display-results"style="display:none">
+    <ul id="messages-search-results"></ul>
+</div>
+<div class="main-message-content">
+    <div class="message-display">
+        <ul id="messages-list"></ul>
+    </div>
 
-<form id="messageForm" onsubmit="post_new_message(event, '{{roomName}}', '{{roomID}}')">
-    <label>Enter Message Here</label>
-    <input type="text" name="message" id="message" required>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+    <div class="message-entry">
+        <div class="small-spacer"></div>
+        <div class="message-entry-field">
+            <form id="messageForm" onsubmit="post_new_message(event, '{{roomName}}', '{{roomID}}')">
+                <input type="text" name="message" id="message" required>
+                <button type="submit" class="btn btn-primary">Enter</button>
+            </form>
+        </div>
+        <div class="small-spacer"></div>
+    </div>
+</div>
+<div class="spacer"></div>
+</div>
 <script src="/util/roomIdGenerator.js"></script>
 <script>   
  let CurrentUserNickname = '{{userName}}';
@@ -71,13 +88,36 @@
     const messagesList = document.getElementById('messages-list');
     messagesList.innerHTML = '';
     messages.forEach(message => {
-        const li = document.createElement('li');
+        const li = document.createElement('div');
         li.id = message.messageID;
-        li.innerHTML = `${message.nickname} ${message.date} ${message.time}<br/> ${message.body}`;
+
         if (message.email === '{{userEmail}}') {
-            li.innerHTML += `<br/> <button onclick="editMessage('${message.messageID}', '${message.body}')">Edit</button> 
-                             <button onclick="deleteMessage('${message.messageID}')">Delete</button>`;
+            li.innerHTML = `<div class = "usr-message-content"> 
+                                <div class= "usr-heading"> 
+                                    <div class="usr-nick-name">${message.nickname}</div> 
+                                    <div class= "usr-date">${message.date}</div>  
+                                    <div class = "usr-time">${message.time}</div> 
+                                </div> 
+                                <div class = "usr-msg">${message.body}</div>
+                            </div> 
+                            <button class = "edit-btn"onclick="editMessage('${message.messageID}', '${message.body}')">Edit</button>  
+                            <button  class = "delete-btn" onclick="deleteMessage('${message.messageID}')">Delete</button>`;
+            li.className = 'user-msg';
         }
+        else{
+
+            li.innerHTML = `<div class = "other-message-content"> 
+                                <div class= "other-heading"> 
+                                    <div class="other-nick-name">${message.nickname}</div> 
+                                    <div class= "other-date">${message.date}</div>  
+                                    <div class = "other-time">${message.time}</div> 
+                                </div>  
+                                <div class = "other-msg">${message.body}</div>
+                            </div> `;
+            li.className = 'other-msg'
+
+            }
+
         messagesList.appendChild(li);
     });
  }
@@ -114,55 +154,69 @@
     }
  }
  
- async function find_message(event) {
+ async function find_message_by_date(event) {
     event.preventDefault();
 
-    search_date = document.getElementById('message-search-box').value;
+    const search_date = document.getElementById('message-search-date-box').value;
     console.log(search_date)
     const [year, month, day] = search_date.split('-');
-    search_date = `${month}-${day}-${year}`;
-    console.log(search_date)
-    url = `/{{roomName}}/{{roomID}}/search/`+ String(search_date);
-    
+    const formatted_date = `${month}-${day}-${year}`;
+    console.log(formatted_date)
+    const url = `/{{roomName}}/{{roomID}}/search-date/`+ String(formatted_date);
+
     try {
         const response = await fetch(url);
-        if(response.status === 404){
-            const messagesList = document.getElementById('messages-search-results');
-            messagesList.innerHTML = '';
-            search_date.innerHTML = '';
+        const messagesList = document.getElementById('messages-search-results');
+        messagesList.innerHTML = '';
+        if (response.status === 404) {
             const p = document.createElement('p');
-            p.innerHTML = 'No messages on this date'
+            p.innerHTML = 'No messages on date: ' + formatted_date;
             messagesList.appendChild(p);
-        }
-        else {
+        } else {
             const messages = await response.json();
-            const messagesList = document.getElementById('messages-search-results');
-            messagesList.innerHTML = '';
-            search_date.innerHTML = '';
             messages.forEach(message => {
-            const li = document.createElement('li');
-            li.id = message.messageID;
-            li.innerHTML = `${message.nickname} ${message.date} ${message.time}<br/> ${message.body}`;
-            if (message.email === '{{userEmail}}') {
-                li.innerHTML += `<br/> <button onclick="editMessage('${message.messageID}', '${message.body}')">Edit</button> 
-                                <button onclick="deleteMessage('${message.messageID}')">Delete</button>`;
-            }
-            messagesList.appendChild(li);
+                const li = document.createElement('div');
+                li.id = message.messageID;
+
+                if (message.email === '{{userEmail}}') {
+                    li.innerHTML = `<div class="usr-message-content"> 
+                                        <div class="usr-heading"> 
+                                            <div class="usr-nick-name">${message.nickname}</div> 
+                                            <div class="usr-date">${message.date}</div>  
+                                            <div class="usr-time">${message.time}</div> 
+                                        </div> 
+                                        <div class="usr-msg">${message.body}</div>
+                                    </div> 
+                                    <button class="edit-btn" onclick="editMessage('${message.messageID}', '${message.body}')">Edit</button>  
+                                    <button class="delete-btn" onclick="deleteMessage('${message.messageID}')">Delete</button>`;
+                    li.className = 'user-msg';
+                } else {
+                    li.innerHTML = `<div class="other-message-content"> 
+                                        <div class="other-heading"> 
+                                            <div class="other-nick-name">${message.nickname}</div> 
+                                            <div class="other-date">${message.date}</div>  
+                                            <div class="other-time">${message.time}</div> 
+                                        </div>  
+                                        <div class="other-msg">${message.body}</div>
+                                    </div>`;
+                    li.className = 'other-msg';
+                }
+                messagesList.appendChild(li);
             });
         }
-        const clear_btn = document.getElementById('message-search-clear');
-        clear_btn.style.display = "block";
-    } catch (error) {
-        console.error('Error deleting message:', error);
-    }
- }
+        document.getElementById('message-display-results').style.display = "block";
+        document.getElementById('message-search-clear').style.display = "block";
 
- function clear_message_search_results(){
-    const messagesList = document.getElementById('messages-search-results');
-    messagesList.innerHTML = '';
-    const clear_btn = document.getElementById('message-search-clear');
-    clear_btn.style.display = "none";
- }
+    } catch (error) {
+        console.error('Error finding message:', error);
+    }
+}
+
+function clear_message_search_results() {
+    document.getElementById('message-display-results').style.display = "none";
+    document.getElementById('message-search-clear').style.display = "none";
+}
+
 
  function returnhome() {
     window.location.href = '/home';
@@ -177,5 +231,4 @@
  setInterval(() => fetchMessages('{{roomName}}', '{{roomID}}'), 3000);
 
 </script>
-</body>
-</html>
+

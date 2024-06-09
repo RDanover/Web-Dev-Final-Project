@@ -6,7 +6,7 @@ async function getRoom(req, res) {
         let response = await fetch(url);
         let data = await response.json();
         res.render('room', {
-            title: 'Chatroom',
+            title: req.params.roomName,
             roomName: req.params.roomName,
             roomID: req.params.roomID,
             messages: data,
@@ -57,7 +57,7 @@ async function deleteMessage(req, res) {
   }
 }
 
-async function searchMessage(req, res) {
+async function searchMessageDate(req, res) {
   console.log("in search message");
   const { roomName, roomID, search_date } = req.params;
   console.log("search_date ",search_date);
@@ -83,6 +83,6 @@ module.exports = {
     getRoom,
     editMessage,
     deleteMessage,
-    searchMessage
+    searchMessageDate
 };
 

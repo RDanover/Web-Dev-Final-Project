@@ -66,7 +66,7 @@ app.get('/signup', authHandler.getSignup); // returns sign in page
 app.post('/signup', authHandler.postSignup);
 app.put('/:roomName/:roomID/:messageID/edit', authenticateToken, roomHandler.editMessage);
 app.delete('/:roomName/:roomID/:messageID/delete', authenticateToken, roomHandler.deleteMessage);
-app.get('/:roomName/:roomID/search/:search_date', roomHandler.searchMessage);
+app.get('/:roomName/:roomID/search-date/:search_date', roomHandler.searchMessageDate);
 
 app.post('/:roomName/:roomID', async (req, res) => {
   console.log('New room created');

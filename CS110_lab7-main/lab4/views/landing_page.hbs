@@ -1,21 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{title}}</title>
-</head>
-<body>
-  <h1>{{title}}</h1>
-  <button onClick="direct_to_login()">Login</button>
-  <button onClick="direct_to_signup()">Sign Up</button>
-  <script>
-    function direct_to_login(){
-        window.location.href = '/login';
-    }
-    function direct_to_signup(){
-        window.location.href = '/signup';
-    }
-  </script>
-</body>
-</html>
+<div class="landing-page-container">
+
+    <div class ="welcome-banner">
+        Welcome to Ankita's and Rachel's Chatroom Site
+    </div>
+    <div class="landing-buttons">
+    <button class="landing-button" onClick="direct_to_login()">Login</button>
+    <button class="landing-button" onClick="direct_to_signup()">Sign Up</button>
+    </div>  
+</div>
+<script>
+function direct_to_login(){
+    window.location.href = '/login';
+}
+function direct_to_signup(){
+    window.location.href = '/signup';
+}
+</script>

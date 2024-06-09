@@ -1,0 +1,324 @@
+body{
+    background-color: rgb(35, 35, 35);
+    color: white;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+input{
+    border-radius: 5px;
+}
+
+button{
+    border-color: white ;
+    border-radius: 25px;
+    background-color:black;
+    color:white;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.body-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.options{
+    display: flex;
+    flex-direction: column;
+}
+
+.landing-page-container{
+    margin-top: 25px;
+    border-radius: 25px;
+    background-color: black;
+    width:600px;
+    height:500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.welcome-banner{
+    margin-top: 50px;
+    margin-bottom:75px;
+    font-size: 50px;
+}
+
+.landing-buttons{
+    display: flex;
+    flex-direction: column;
+}
+
+.landing-button{
+    margin-bottom: 50px;
+    border-radius: 50px;
+    width: 200px;
+    height: 75px;
+    font-size: 32px;
+}
+
+.login-signup-banner{
+    margin-top: 50px;
+    margin-bottom:50px;
+    font-size: 50px;
+}
+
+.login-signup-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-signup-field{
+    margin-bottom: 25px;
+}
+
+.login-signup-btn{
+    margin-top: 25px;
+    margin-bottom:25px;
+    min-width: 100px;
+    min-height: 50px;
+    font-size: 18px;
+}
+
+.login-container{
+    margin-top: 25px;
+    border-radius: 25px;
+    background-color: black;
+    width:600px;
+    height:500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.signup-container{
+    margin-top: 25px;
+    border-radius: 25px;
+    background-color: black;
+    width:600px;
+    height:550px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.home-container{
+    margin-top: 25px;
+    border-radius: 25px;
+    background-color: black;
+    width:600px;
+    min-height:550px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.options{
+    margin-top:20px;
+    margin-left:480px;
+    display: flex;
+    flex-direction: column;
+}
+
+.new-room{
+    margin-bottom:30px;
+}
+
+
+.home-title{
+    font-size: 32px;
+}
+
+.create_new_room_form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.home-btn{
+    margin-top: 25px;
+    min-width: 50px;
+    min-height: 25px;
+    font-size: 14px;
+}
+
+.option-btn{
+    min-width: 50px;
+    min-height: 25px;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.room{
+    margin-bottom: 40px;
+    font-size: 20px;
+}
+
+.room-btn{
+    min-width: 50px;
+    min-height: 25px;
+    font-size: 14px;
+}
+
+.spacer{
+    margin-bottom:75px;
+}
+
+.room-container{
+    margin-top: 25px;
+    border-radius: 25px;
+    background-color: black;
+    width:700px;
+    min-height:550px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.description{
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.msg-search{
+    margin-bottom: 10px;
+}
+
+.message-search-options{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.message-display{
+    background-color: white;
+    border-radius: 10px;
+    color:black;
+    width:500px;
+    margin-top: 10px;
+    max-height: 500px;
+    min-height: 100px;
+    overflow-y: scroll;
+}
+
+.main-message-content{
+    background-color: white;
+    border-radius: 10px;
+    color:black;
+    width:500px;
+    margin-top: 50px;
+}
+
+.message-entry{
+    background-color: darkgray;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    text-align: right;
+    height:40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.message-entry-field{
+    margin-right: 5px;
+}
+
+.small-spacer{
+    margin-bottom:10px;
+}
+
+.other-msg{
+    margin-right: 200px;
+    background-color: lightgrey;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    margin-top:10px;
+    max-width: 230px;
+}
+
+.user-msg{
+    margin-left: 200px;
+    background-color: lightblue;
+    border-radius: 10px;
+    max-width: 230px;
+    margin-bottom: 10px;
+    margin-top:10px;
+}
+
+.edit-btn{
+    background-color:lightgreen;
+    color:black;
+    margin-top:10px;
+    margin-bottom:5px;
+    margin-left:130px;
+}
+
+.delete-btn{
+    background-color:lightcoral;
+    color:black;
+    margin-right:5px;
+    margin-top:10px;
+    margin-bottom:5px;
+}
+
+.usr-message-content{
+    display:flex;
+    flex-direction: column;
+}
+
+.usr-heading{
+    display:flex;
+    flex-direction: row;
+}
+
+.other-message-content{
+    display:flex;
+    flex-direction: column;
+}
+
+.other-heading{
+    display:flex;
+    flex-direction: row;
+}
+
+.usr-nick-name, .other-nick-name{
+    margin-left: 10px;
+    margin-top: 5px;
+    font-size: 18px;
+    text-decoration-line: underline;
+    min-width: 100px;
+    text-align: left;
+}
+
+.usr-date, .other-date{
+    margin-left:5px;
+    margin-top:10px;
+    font-size: 12px;
+    color:rgb(85, 85, 85);
+}
+.usr-time, .other-time{
+    margin-left:5px;
+    margin-top:10px;
+    font-size: 12px;
+    color:rgb(85, 85, 85);
+}
+
+.usr-msg{
+    margin-left:10px;
+    margin-right:10px;
+    margin-top:10px;
+    text-align: right;
+}
+
+.other-msg{
+    margin-left:10px;
+    margin-right:10px;
+    margin-top:10px;
+    text-align: left;
+}
