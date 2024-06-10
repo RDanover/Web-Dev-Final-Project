@@ -322,3 +322,7 @@ button{
     margin-top:10px;
     text-align: left;
 }
+
+.no-msg-found{
+    margin-top:40px;
+}

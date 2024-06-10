@@ -21,7 +21,7 @@ const app = express();
 const port = 3000;
 
 const uri = "mongodb+srv://rdano001:aLh2YYXddmzwTbbU@cluster0.ono5ysw.mongodb.net/sample_mflix";
-const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
+const clientOptions = { serverApi: { version: '1', strict: false, deprecationErrors: true } };
 
 async function run() {
   try {
@@ -67,6 +67,7 @@ app.post('/signup', authHandler.postSignup);
 app.put('/:roomName/:roomID/:messageID/edit', authenticateToken, roomHandler.editMessage);
 app.delete('/:roomName/:roomID/:messageID/delete', authenticateToken, roomHandler.deleteMessage);
 app.get('/:roomName/:roomID/search-date/:search_date', roomHandler.searchMessageDate);
+app.get('/:roomName/:roomID/search-message/:search_term', roomHandler.searchMessage);
 
 app.post('/:roomName/:roomID', async (req, res) => {
   console.log('New room created');

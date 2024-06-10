@@ -79,10 +79,47 @@ async function searchMessageDate(req, res) {
   }
 }
 
+async function searchMessage(req, res) {
+  const { roomName, roomID, search_term } = req.params;
+  try {
+    const messages = await Message.aggregate([
+      {
+        $search: {
+          index: "default",
+          text: {
+            query: search_term,
+            path: {
+              wildcard: "*"
+            }
+          }
+        }
+      },
+      {
+        $match: {
+          roomID: roomID
+        }
+      }
+    ]);
+    if (messages.length===0) {
+      return res.status(404).send({
+        message: `Could not find message with term/phrase "${search_term}" in this chatroom`,
+      });
+    }
+    res.send(messages);
+  } catch (error) {
+    console.error('Error searching for messages:', error);
+    res.status(500).send({
+      message: `Could not get message with term/phrase "${search_term}" in this chatroom`,
+    });
+  }
+}
+
+
 module.exports = {
     getRoom,
     editMessage,
     deleteMessage,
-    searchMessageDate
+    searchMessageDate,
+    searchMessage
 };
 

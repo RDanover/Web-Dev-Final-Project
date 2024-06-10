@@ -171,6 +171,63 @@
         if (response.status === 404) {
             const p = document.createElement('p');
             p.innerHTML = 'No messages on date: ' + formatted_date;
+            p.className='no-msg-found';
+            messagesList.appendChild(p);
+        } else {
+            const messages = await response.json();
+            messages.forEach(message => {
+                const li = document.createElement('div');
+                li.id = message.messageID;
+
+                if (message.email === '{{userEmail}}') {
+                    li.innerHTML = `<div class="usr-message-content"> 
+                                        <div class="usr-heading"> 
+                                            <div class="usr-nick-name">${message.nickname}</div> 
+                                            <div class="usr-date">${message.date}</div>  
+                                            <div class="usr-time">${message.time}</div> 
+                                        </div> 
+                                        <div class="usr-msg">${message.body}</div>
+                                    </div> 
+                                    <button class="edit-btn" onclick="editMessage('${message.messageID}', '${message.body}')">Edit</button>  
+                                    <button class="delete-btn" onclick="deleteMessage('${message.messageID}')">Delete</button>`;
+                    li.className = 'user-msg';
+                } else {
+                    li.innerHTML = `<div class="other-message-content"> 
+                                        <div class="other-heading"> 
+                                            <div class="other-nick-name">${message.nickname}</div> 
+                                            <div class="other-date">${message.date}</div>  
+                                            <div class="other-time">${message.time}</div> 
+                                        </div>  
+                                        <div class="other-msg">${message.body}</div>
+                                    </div>`;
+                    li.className = 'other-msg';
+                }
+                messagesList.appendChild(li);
+            });
+        }
+        document.getElementById('message-display-results').style.display = "block";
+        document.getElementById('message-search-clear').style.display = "block";
+
+    } catch (error) {
+        console.error('Error finding message:', error);
+    }
+}
+
+ async function find_message(event) {
+    event.preventDefault();
+
+    const search_term = document.getElementById('message-search-box').value;
+
+    const url = `/{{roomName}}/{{roomID}}/search-message/`+ String(search_term);
+
+    try {
+        const response = await fetch(url);
+        const messagesList = document.getElementById('messages-search-results');
+        messagesList.innerHTML = '';
+        if (response.status === 404) {
+            const p = document.createElement('p');
+            p.innerHTML = 'No messages with phrase: \"' + search_term+'\"';
+            p.className='no-msg-found';
             messagesList.appendChild(p);
         } else {
             const messages = await response.json();
@@ -215,8 +272,11 @@
 function clear_message_search_results() {
     document.getElementById('message-display-results').style.display = "none";
     document.getElementById('message-search-clear').style.display = "none";
+    const search_term = document.getElementById('message-search-box');
+    search_term.value='';
+    const search_date = document.getElementById('message-search-date-box');
+    search_date.value='';
 }
-
 
  function returnhome() {
     window.location.href = '/home';
