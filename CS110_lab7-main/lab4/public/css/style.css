@@ -293,6 +293,7 @@ button{
     font-size: 18px;
     text-decoration-line: underline;
     min-width: 100px;
+    max-width: 100px;
     text-align: left;
 }
 
