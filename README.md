@@ -11,6 +11,7 @@ How to run: </br>
 </br>
 If errors occur after entering npm run start, please read the warning messages and install any requried dependancies.
 </br>
-video demo:
 </br>
-https://youtu.be/9xSN5OM_Sgw
+Video Demo:
+</br>
+[https://youtu.be/9xSN5OM_Sgw](https://youtu.be/9xSN5OM_Sgw)
