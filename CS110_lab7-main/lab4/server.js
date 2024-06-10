@@ -6,6 +6,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const sanitizeHtml = require('sanitize-html');
 
 // import handlers
 const homeHandler = require('./controllers/home.js');
@@ -71,7 +72,7 @@ app.get('/:roomName/:roomID/search-message/:search_term', roomHandler.searchMess
 
 app.post('/:roomName/:roomID', async (req, res) => {
   console.log('New room created');
-  const room = new Room({ roomName: req.params.roomName, roomID: req.params.roomID });
+  const room = new Room({ roomName: sanitizeHtml(req.params.roomName), roomID: req.params.roomID });
   await room.save();
 });
 
@@ -118,10 +119,10 @@ app.post('/:roomName/:roomID/:messageID/:nickname/:message/:email', async (req, 
   console.log('New chat created');
   const current_time = new Date(); // Capture the current date and time
   const message = new Message({
-    nickname: req.params.nickname,
+    nickname: sanitizeHtml(req.params.nickname),
     messageID: req.params.messageID,
     roomID: req.params.roomID,
-    body: decodeURIComponent(req.params.message),
+    body: sanitizeHtml(decodeURIComponent(req.params.message)),
     date: formatDate(current_time), // Extract and set the date
     time: formatTime(current_time), // Extract and set the time
     email: req.params.email

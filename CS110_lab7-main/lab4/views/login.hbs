@@ -13,13 +13,15 @@
 </form>
 <button class="login-signup-btn" onclick="returnLanding()">Return to Landing Page</button>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.6/purify.min.js"></script>
 <script>
 async function Login_Submit(event) {
     event.preventDefault();
 
-    const email = document.getElementById('email_login').value;
-    const password = document.getElementById('password_login').value;
-
+    let email = document.getElementById('email_login').value;
+    email = DOMPurify.sanitize(email, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+    let password = document.getElementById('password_login').value;
+    password = DOMPurify.sanitize(password, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
     try {
         const response = await fetch('/login', {
             method: 'POST',

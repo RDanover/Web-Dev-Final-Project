@@ -45,6 +45,7 @@
 </div>
 <div class="spacer"></div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.6/purify.min.js"></script>
 <script src="/util/roomIdGenerator.js"></script>
 <script>   
  let CurrentUserNickname = '{{userName}}';
@@ -59,7 +60,8 @@
         }
     }
 
-    const message = document.getElementById('message').value;
+    let message = document.getElementById('message').value;
+    message = DOMPurify.sanitize(message, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
     const messageID = generateRoomIdentifier();
 
     try {

@@ -1,17 +1,18 @@
 const Message = require('../models/Message');
+const sanitizeHtml = require('sanitize-html');
 
 async function getRoom(req, res) {
     try {
-        let url = 'http://localhost:3000/' + req.params.roomName + '/' + req.params.roomID + '/messages';
+        let url = 'http://localhost:3000/' + sanitizeHtml(req.params.roomName) + '/' + req.params.roomID + '/messages';
         let response = await fetch(url);
         let data = await response.json();
         res.render('room', {
             title: req.params.roomName,
-            roomName: req.params.roomName,
+            roomName: sanitizeHtml(req.params.roomName),
             roomID: req.params.roomID,
             messages: data,
-            userName: req.user.name,
-            userEmail: req.user.email
+            userName: sanitizeHtml(req.user.name),
+            userEmail: sanitizeHtml(req.user.email)
         });
     } catch (error) {
         console.error('Error fetching messages:', error);
@@ -24,7 +25,7 @@ async function editMessage(req, res) {
   console.log("roomID:",roomID)
   console.log("messageID:",messageID)
   try {
-      const updatedMessage = await Message.updateOne({ roomID: roomID, messageID:messageID }, { $set:{body:body}} );
+      const updatedMessage = await Message.updateOne({ roomID: roomID, messageID:messageID }, { $set:{body:sanitizeHtml(body)}} );
       console.log(updatedMessage)
       if (!updatedMessage) {
           console.log("Message not found");
@@ -58,9 +59,7 @@ async function deleteMessage(req, res) {
 }
 
 async function searchMessageDate(req, res) {
-  console.log("in search message");
   const { roomName, roomID, search_date } = req.params;
-  console.log("search_date ",search_date);
   try {
     const messages = await Message.find({ date:search_date, roomID:roomID });
     if (messages.length===0) {
@@ -87,7 +86,7 @@ async function searchMessage(req, res) {
         $search: {
           index: "default",
           text: {
-            query: search_term,
+            query: sanitizeHtml(search_term),
             path: {
               wildcard: "*"
             }
@@ -102,14 +101,14 @@ async function searchMessage(req, res) {
     ]);
     if (messages.length===0) {
       return res.status(404).send({
-        message: `Could not find message with term/phrase "${search_term}" in this chatroom`,
+        message: `Could not find message with term/phrase "${sanitizeHtml(search_term)}" in this chatroom`,
       });
     }
     res.send(messages);
   } catch (error) {
     console.error('Error searching for messages:', error);
     res.status(500).send({
-      message: `Could not get message with term/phrase "${search_term}" in this chatroom`,
+      message: `Could not get message with term/phrase "${sanitizeHtml(search_term)}" in this chatroom`,
     });
   }
 }

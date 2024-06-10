@@ -1,13 +1,16 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const sanitizeHtml = require('sanitize-html');
 
 exports.getLogin = (req, res) => {
   res.render('login',{title:"Log In"});
 };
 
 exports.postLogin = async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
+  email = sanitizeHtml(email)
+  password=sanitizeHtml(password)
   const user = await User.findOne({ email });
 
   if (!user) {
@@ -29,8 +32,10 @@ exports.getSignup = (req, res) => {
 };
 
 exports.postSignup = async (req, res) => {
-  const { email, password, name } = req.body;
-
+  let { email, password, name } = req.body;
+  email = sanitizeHtml(email)
+  password=sanitizeHtml(password)
+  name = sanitizeHtml(name)
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     return res.status(400).json({ message: 'Email already exists' });

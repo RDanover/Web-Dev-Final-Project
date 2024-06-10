@@ -19,13 +19,16 @@
 </form>
   <button class="login-signup-btn" onclick="returnLanding()">Return to Landing Page</button>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.6/purify.min.js"></script>
 <script>
   async function SignUp_Submit(event) {
       event.preventDefault();
-      const name = document.getElementById('name_signup').value
-      const email = document.getElementById('email_signup').value;
-      const password = document.getElementById('password_signup').value;
-
+      let name = document.getElementById('name_signup').value
+      let email = document.getElementById('email_signup').value;
+      let password = document.getElementById('password_signup').value;
+      name = DOMPurify.sanitize(name, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+      email = DOMPurify.sanitize(email, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+      password = DOMPurify.sanitize(password, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
       try {
           const response = await fetch('/signup', {
               method: 'POST',
