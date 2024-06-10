@@ -13,4 +13,4 @@ If errors occur after entering npm run start, please read the warning messages a
 </br>
 video demo:
 </br>
-![5DF981EF-C377-4E6A-AF73-D41EDCC041F0_1_102_o](https://github.com/RDanover/CS110_Final_Project/assets/60625627/a6366f75-6ae3-4893-8c0c-46349c4000fd)
+https://youtu.be/9xSN5OM_Sgw
