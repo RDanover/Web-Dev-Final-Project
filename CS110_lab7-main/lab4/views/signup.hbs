@@ -1,60 +1,45 @@
-<div class="signup-container">
-<div class="login-signup-banner">Sign Up</div>
-<form class="login-signup-form" onsubmit="SignUp_Submit(event)">
-  <div class="login-signup-field">
-    <label for="name">Name:</label>
-    <input type="text" id="name_signup" name="name" required>
-  </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <script type="module">
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+        import { app } from './firebase.js';
 
-  <div class="login-signup-field">
-    <label for="email">Email:</label>
-    <input type="email" id="email_signup" name="email" required>
-  </div>
-  <div class="login-signup-field">
-    <label for="password">Password:</label>
-    <input type="password" id="password_signup" name="password" required>
-  </div>
+        document.addEventListener('DOMContentLoaded', () => {
+            const auth = getAuth(app);
+            const googleButton = document.getElementById('google-sign-in');
 
-  <button class="login-signup-btn" type="submit">Sign Up</button>
-</form>
-  <button class="login-signup-btn" onclick="returnLanding()">Return to Landing Page</button>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.6/purify.min.js"></script>
-<script>
-  async function SignUp_Submit(event) {
-      event.preventDefault();
-      let name = document.getElementById('name_signup').value
-      let email = document.getElementById('email_signup').value;
-      let password = document.getElementById('password_signup').value;
-      name = DOMPurify.sanitize(name, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-      email = DOMPurify.sanitize(email, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-      password = DOMPurify.sanitize(password, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-      try {
-          const response = await fetch('/signup', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ name, email, password })
-          });
-
-          const result = await response.json();
-
-          if (response.status === 200) {
-              // Login successful, redirect to home page
-              window.location.href = '/home';
-          } else {
-              // Display error message
-              alert(result.message);
-          }
-      } catch (error) {
-          console.error('Error during Sign Up:', error);
-          alert('An error occurred. Please try again.');
-      }
-  }
-
-  function returnLanding(){
-      window.location.href = '/';
-  }
-  
-</script>
+            googleButton.addEventListener('click', async () => {
+                const provider = new GoogleAuthProvider();
+                provider.setCustomParameters({ prompt: "select_account" });
+                try {
+                    const result = await signInWithPopup(auth, provider);
+                    const userEmail = result.user.email;
+                    console.log(userEmail); // Email is isolated
+                    // Redirect to home page
+                    window.location.href = '/home';
+                } catch (error) {
+                    console.error('Error during sign-in:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="login-signup-banner">Sign Up</div>
+        <form class="login-signup-form" onsubmit="SignUp_Submit(event)">
+            <div class="login-signup-field">
+                <label for="name">Name:</label>
+                <input type="text" id="name_signup" name="name" required>
+            </div>
+            <div class="login-signup-field">
+                <label for="email">Email:</label>
+                <input type="email" id="email_signup" name="email" required>
+            </div>
+            <div class="login-signup-field">
+                <label
