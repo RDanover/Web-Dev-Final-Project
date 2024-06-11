@@ -56,6 +56,29 @@ function authenticateToken(req, res, next) {
   });
 }
 
+app.post('/google-signin', async (req, res) => {
+    const { email, name } = req.body;
+
+    try {
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            // User does not exist, create a new user
+            user = new User({ email, name });
+            await user.save();
+        }
+
+        const token = jwt.sign({ email: user.email, name:user.name, id: user._id }, 'your_jwt_secret_key', { expiresIn: '1h' });
+        res.cookie('token', token, { httpOnly: true });
+        res.status(200).json({ message: 'Login successful' });
+
+        res.status(200).json({ token });
+    } catch (error) {
+        console.error('Error during Google sign-in:', error);
+        res.status(500).json({ message: 'An error occurred. Please try again.' });
+    }
+});
+
 // SERVER SIDE CODE:
 app.get('/', landingHandler.getLanding);
 app.get('/home', authenticateToken, homeHandler.getHome); // returns home page

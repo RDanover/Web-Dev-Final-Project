@@ -1,3 +1,53 @@
+    <script type="module">
+        // Firebase SDK scripts
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDuLk2gvX8nV_M8fdTuRPnuQv2n8HZ7dc",
+            authDomain: "example-aa537.firebaseapp.com",
+            projectId: "example-aa537",
+            messagingSenderId: "125740441376",
+            appId: "1:125740441376:web:812d39321fb0262e7ac145"
+        };
+
+        const app = initializeApp(firebaseConfig);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const auth = getAuth(app);
+            const googleButton = document.getElementById('google-sign-in');
+
+            googleButton.addEventListener('click', async () => {
+                const provider = new GoogleAuthProvider();
+                provider.setCustomParameters({ prompt: "select_account" });
+                try {
+                    const result = await signInWithPopup(auth, provider);
+                    const user = result.user;
+                    const userEmail = user.email;
+                    const userName = user.displayName;
+
+                    const response = await fetch('/google-signin', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email: userEmail, name: userName })
+                    });
+
+                    if (response.status === 200) {
+                        window.location.href = '/home';
+                    } else {
+                        const result = await response.json();
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    console.error('Error during sign-in:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    </script>
 <div class="landing-page-container">
 
     <div class ="welcome-banner">
@@ -6,6 +56,7 @@
     <div class="landing-buttons">
     <button class="landing-button" onClick="direct_to_login()">Login</button>
     <button class="landing-button" onClick="direct_to_signup()">Sign Up</button>
+    <button class="login-signup-btn" id="google-sign-in">Sign in with Google</button>
     </div>  
 </div>
 <script>
