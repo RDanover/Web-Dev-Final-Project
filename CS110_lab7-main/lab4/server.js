@@ -4,7 +4,6 @@ const cookieParser = require('cookie-parser');
 const hbs = require('express-handlebars');
 const path = require('path');
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const sanitizeHtml = require('sanitize-html');
 
@@ -57,26 +56,24 @@ function authenticateToken(req, res, next) {
 }
 
 app.post('/google-signin', async (req, res) => {
-    const { email, name } = req.body;
+  const { email, name } = req.body;
 
-    try {
-        let user = await User.findOne({ email });
+  try {
+    let user = await User.findOne({ email });
 
-        if (!user) {
-            // User does not exist, create a new user
-            user = new User({ email, name });
-            await user.save();
-        }
-
-        const token = jwt.sign({ email: user.email, name:user.name, id: user._id }, 'your_jwt_secret_key', { expiresIn: '1h' });
-        res.cookie('token', token, { httpOnly: true });
-        res.status(200).json({ message: 'Login successful' });
-
-        res.status(200).json({ token });
-    } catch (error) {
-        console.error('Error during Google sign-in:', error);
-        res.status(500).json({ message: 'An error occurred. Please try again.' });
+    if (!user) {
+      // User does not exist, create a new user
+      user = new User({ email, name });
+      await user.save();
     }
+
+    const token = jwt.sign({ email: user.email, name: user.name, id: user._id }, 'your_jwt_secret_key', { expiresIn: '1h' });
+    res.cookie('token', token, { httpOnly: true });
+    return res.status(200).json({ message: 'Login successful' }); // Ensure to return the response
+  } catch (error) {
+    console.error('Error during Google sign-in:', error);
+    return res.status(500).json({ message: 'An error occurred. Please try again.' }); // Ensure to return the response
+  }
 });
 
 // SERVER SIDE CODE:
@@ -164,15 +161,15 @@ function formatDate(date) {
 
 // Function to format time as hh:mm
 function formatTime(date) {
-  hours_int = (date.getHours())
+  let hours_int = date.getHours();
   const minutes = String(date.getMinutes()).padStart(2, '0');
-  time = " am"
-  if(hours_int>12){
-    hours_int-=12
-    time = " pm"
+  let time = " am";
+  if (hours_int > 12) {
+    hours_int -= 12;
+    time = " pm";
   }
-  hours = String(hours_int).padStart(2,'0');
-  return `${hours}:${minutes}`+time;
+  const hours = String(hours_int).padStart(2, '0');
+  return `${hours}:${minutes}` + time;
 }
 
 app.listen(port, () => console.log(`Server listening on http://localhost:${port}`));
