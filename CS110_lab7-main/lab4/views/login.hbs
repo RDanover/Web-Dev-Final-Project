@@ -1,50 +1,85 @@
-<div class="login-container">
-<div class="login-signup-banner">Login</div>
-<form class="login-signup-form"onsubmit="Login_Submit(event)">
-    <div class="login-signup-field">
-        <label for="email">Email:</label>
-        <input type="email" id="email_login" name="email" required>
-    </div>
-    <div class="login-signup-field">
-        <label for="password">Password:</label>
-        <input type="password" id="password_login" name="password" required>
-    </div>
-    <button class="login-signup-btn" type="submit">Login</button>
-</form>
-<button class="login-signup-btn" onclick="returnLanding()">Return to Landing Page</button>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.6/purify.min.js"></script>
-<script>
-async function Login_Submit(event) {
-    event.preventDefault();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script type="module">
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+        import { app } from './firebase.js';
 
-    let email = document.getElementById('email_login').value;
-    email = DOMPurify.sanitize(email, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-    let password = document.getElementById('password_login').value;
-    password = DOMPurify.sanitize(password, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-    try {
-        const response = await fetch('/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
+        document.addEventListener('DOMContentLoaded', () => {
+            const auth = getAuth(app);
+            const googleButton = document.getElementById('google-sign-in');
+
+            googleButton.addEventListener('click', async () => {
+                const provider = new GoogleAuthProvider();
+                provider.setCustomParameters({ prompt: "select_account" });
+                try {
+                    const result = await signInWithPopup(auth, provider);
+                    const userEmail = result.user.email;
+                    console.log(userEmail); // Email is isolated
+                    // Redirect to home page
+                    window.location.href = '/home';
+                } catch (error) {
+                    console.error('Error during sign-in:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
         });
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-signup-banner">Login</div>
+        <form class="login-signup-form" onsubmit="Login_Submit(event)">
+            <div class="login-signup-field">
+                <label for="email">Email:</label>
+                <input type="email" id="email_login" name="email" required>
+            </div>
+            <div class="login-signup-field">
+                <label for="password">Password:</label>
+                <input type="password" id="password_login" name="password" required>
+            </div>
+            <button class="login-signup-btn" type="submit">Login</button>
+        </form>
+        <button class="login-signup-btn" id="google-sign-in">Sign in with Google</button>
+        <button class="login-signup-btn" onclick="returnLanding()">Return to Landing Page</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.6/purify.min.js"></script>
+    <script>
+        async function Login_Submit(event) {
+            event.preventDefault();
 
-        const result = await response.json();
+            let email = document.getElementById('email_login').value;
+            email = DOMPurify.sanitize(email, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+            let password = document.getElementById('password_login').value;
+            password = DOMPurify.sanitize(password, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
 
-        if (response.status === 200) {
-            window.location.href = '/home';
-        } else {
-            alert(result.message);
+                const result = await response.json();
+
+                if (response.status === 200) {
+                    window.location.href = '/home';
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
+                alert('An error occurred. Please try again.');
+            }
         }
-    } catch (error) {
-        console.error('Error during login:', error);
-        alert('An error occurred. Please try again.');
-    }
-}
-  function returnLanding(){
-      window.location.href = '/';
-  }
-</script>
 
+        function returnLanding() {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
