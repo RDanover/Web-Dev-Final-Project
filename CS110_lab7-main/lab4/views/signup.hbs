@@ -18,7 +18,6 @@
             appId: "1:125740441376:web:812d39321fb0262e7ac145"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -30,10 +29,24 @@
                 provider.setCustomParameters({ prompt: "select_account" });
                 try {
                     const result = await signInWithPopup(auth, provider);
-                    const userEmail = result.user.email;
-                    console.log(userEmail); // Email is isolated
-                    // Redirect to home page
-                    window.location.href = '/home';
+                    const user = result.user;
+                    const userEmail = user.email;
+                    const userName = user.displayName;
+
+                    const response = await fetch('/google-signin', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email: userEmail, name: userName })
+                    });
+
+                    if (response.status === 200) {
+                        window.location.href = '/home';
+                    } else {
+                        const result = await response.json();
+                        alert(result.message);
+                    }
                 } catch (error) {
                     console.error('Error during sign-in:', error);
                     alert('An error occurred. Please try again.');
