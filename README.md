@@ -1,3 +1,7 @@
+*Google Auth API key has been revoked and Mongo DB has been shut down. To restore functionality please provide your own API key and Mongo DB.*
+
+This project uses React JS to create a working chatroom that stores chat messages in a Mongo DB database.
+
 How to run: </br>
 1. Download Zip
 2. Unzip file in a directory of your choosing
@@ -14,4 +18,4 @@ If errors occur after entering npm run start, please read the warning messages a
 </br>
 Video Demo:
 </br>
-https://youtu.be/JsOhKkGaV4c
+https://youtu.be/HtWimpet8Z4
