@@ -20,7 +20,7 @@ const User = require('./models/User');
 const app = express();
 const port = 3000;
 
-const uri = "mongodb+srv://rdano001:aLh2YYXddmzwTbbU@cluster0.ono5ysw.mongodb.net/sample_mflix";
+const uri = "mongoDB URI here";
 const clientOptions = { serverApi: { version: '1', strict: false, deprecationErrors: true } };
 
 async function run() {
